@@ -25,12 +25,10 @@ class HomePage extends StatelessWidget {
                     child: Image.asset(
                       "assets/images/logo.png",
                       fit: BoxFit.contain,
-      
                     ),
-                    
                   ),
-                                    const Text(
-                    "TRACHE TRAVEL",
+                  const Text(
+                    "GO TRAVEL",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

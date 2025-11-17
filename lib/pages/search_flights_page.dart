@@ -43,7 +43,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                   Image.asset('assets/images/logo.png', height: 110),
                   const SizedBox(height: 10),
                   const Text(
-                    "TRACHE TRAVEL",
+                    "GO TRAVEL",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -104,8 +104,11 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 trailingIcon: Icons.edit,
                 onTap: () async {
                   final value = await _openTextEditor(
-                      "Ville de départ", fromController.text);
-                  if (value != null) setState(() => fromController.text = value);
+                    "Ville de départ",
+                    fromController.text,
+                  );
+                  if (value != null)
+                    setState(() => fromController.text = value);
                 },
               ),
               const SizedBox(height: 15),
@@ -116,7 +119,9 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 trailingIcon: Icons.edit,
                 onTap: () async {
                   final value = await _openTextEditor(
-                      "Ville d'arrivée", toController.text);
+                    "Ville d'arrivée",
+                    toController.text,
+                  );
                   if (value != null) setState(() => toController.text = value);
                 },
               ),
@@ -180,7 +185,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           SimpleDialogOption(
                             onPressed: () => Navigator.pop(context, i),
                             child: Text("$i adulte${i > 1 ? 's' : ''}"),
-                          )
+                          ),
                       ],
                     ),
                   );
@@ -190,7 +195,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
             ]
-
             // =========================================
             //          FORMULAIRE -> HOTELS
             // =========================================
@@ -299,7 +303,9 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined), label: ""),
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: "",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
         ],
       ),
@@ -355,11 +361,13 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
           content: TextField(controller: controller),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Annuler")),
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Annuler"),
+            ),
             ElevatedButton(
-                onPressed: () => Navigator.pop(context, controller.text),
-                child: const Text("OK")),
+              onPressed: () => Navigator.pop(context, controller.text),
+              child: const Text("OK"),
+            ),
           ],
         );
       },
@@ -408,12 +416,11 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               child: const Text("Annuler"),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  Navigator.pop(context, {
-                    "adults": adults,
-                    "children": children,
-                    "rooms": rooms,
-                  }),
+              onPressed: () => Navigator.pop(context, {
+                "adults": adults,
+                "children": children,
+                "rooms": rooms,
+              }),
               child: const Text("OK"),
             ),
           ],
