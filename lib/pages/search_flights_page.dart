@@ -40,7 +40,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
             Center(
               child: Column(
                 children: [
-                  Image.asset('assets/images/logo.png', height: 115),
+                  Image.asset('assets/images/logo.png', height: 110),
                   const SizedBox(height: 10),
                   const Text(
                     "TRACHE TRAVEL",

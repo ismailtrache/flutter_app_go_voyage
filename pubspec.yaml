@@ -20,3 +20,8 @@ flutter:
 
   assets:
     - assets/images/logo.png
+    - assets/images/caire.png
+    - assets/images/oran.png
+    - assets/images/paris.png
+    - assets/images/santorini.png
+    - assets/images/rabat.png
