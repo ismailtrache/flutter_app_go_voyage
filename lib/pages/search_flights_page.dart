@@ -1,28 +1,44 @@
 import 'package:flutter/material.dart';
 
 class SearchFlightsPage extends StatefulWidget {
-  const SearchFlightsPage({super.key});
+  /// false = commencer sur Vols
+  /// true  = commencer sur Hotels
+  final bool startWithHotel;
+
+  const SearchFlightsPage({super.key, this.startWithHotel = false});
 
   @override
   State<SearchFlightsPage> createState() => _SearchFlightsPageState();
 }
 
 class _SearchFlightsPageState extends State<SearchFlightsPage> {
-  bool isFlightSelected = true;
+  late bool isFlightSelected;
 
-  // --- CONTROLLERS ET VARIABLES ---
+  // Champs de texte
   final fromController = TextEditingController(text: "Toronto");
   final toController = TextEditingController(text: "New York");
 
+  // Dates
   DateTime? departDate;
   DateTime? retourDate;
 
+  // Adultes vol
   int adults = 2;
 
-  // Variables pour hôtel
+  // Hôtel
   int hotelAdults = 2;
   int hotelChildren = 0;
   int hotelRooms = 1;
+
+  // 🔥 Nouveau : Aller-retour + escales
+  int tripType = 0; // 0 = Aller-Retour, 1 = Aller simple
+  int stopCount = 0; // 0 = Direct, 1 = 1 escale, 2 = 2+ escales
+
+  @override
+  void initState() {
+    super.initState();
+    isFlightSelected = !widget.startWithHotel;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +52,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
           children: [
             const SizedBox(height: 20),
 
-            // ========================= LOGO =========================
+            // LOGO
             Center(
               child: Column(
                 children: [
@@ -50,20 +66,12 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                       color: Color(0xFF265F6A),
                     ),
                   ),
-                  const Text(
-                    "SERVICES",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF265F6A),
-                    ),
-                  ),
                   const SizedBox(height: 25),
                 ],
               ),
             ),
 
-            // =================== ONGLET VOL / HOTEL ===================
+            // Onglets Vols / Hotels
             Container(
               height: 55,
               decoration: BoxDecoration(
@@ -94,21 +102,15 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
             const SizedBox(height: 25),
 
-            // =========================================
-            //           FORMULAIRE -> VOLS
-            // =========================================
+            // ---------------- FORMULAIRE VOLS ----------------
             if (isFlightSelected) ...[
               _buildInputField(
                 icon: Icons.search,
                 text: fromController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor(
-                    "Ville de départ",
-                    fromController.text,
-                  );
-                  if (value != null)
-                    setState(() => fromController.text = value);
+                  final value = await _openTextEditor("Ville de départ", fromController.text);
+                  if (value != null) setState(() => fromController.text = value);
                 },
               ),
               const SizedBox(height: 15),
@@ -118,15 +120,14 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: toController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor(
-                    "Ville d'arrivée",
-                    toController.text,
-                  );
+                  final value = await _openTextEditor("Ville d'arrivée", toController.text);
                   if (value != null) setState(() => toController.text = value);
                 },
               ),
+
               const SizedBox(height: 15),
 
+              // Dates aller + retour
               Row(
                 children: [
                   Expanded(
@@ -142,8 +143,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           firstDate: DateTime.now(),
                           lastDate: DateTime(2030),
                         );
-                        if (selected != null)
-                          setState(() => departDate = selected);
+                        if (selected != null) setState(() => departDate = selected);
                       },
                     ),
                   ),
@@ -161,8 +161,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           firstDate: departDate ?? DateTime.now(),
                           lastDate: DateTime(2030),
                         );
-                        if (selected != null)
-                          setState(() => retourDate = selected);
+                        if (selected != null) setState(() => retourDate = selected);
                       },
                     ),
                   ),
@@ -171,6 +170,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
 
+              // Adultes
               _buildInputField(
                 icon: Icons.person_outline,
                 text: "$adults Adultes",
@@ -194,18 +194,79 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               ),
 
               const SizedBox(height: 15),
+
+              // 🔥 Aller-Retour + Escales
+              Row(
+                children: [
+                  Expanded(
+                    child: _dropdownField(
+                      label: tripType == 0 ? "Aller-Retour" : "Aller Simple",
+                      onTap: () async {
+                        final value = await showDialog<int>(
+                          context: context,
+                          builder: (context) => SimpleDialog(
+                            title: const Text("Type de voyage"),
+                            children: [
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 0),
+                                child: const Text("Aller-Retour"),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 1),
+                                child: const Text("Aller Simple"),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (value != null) setState(() => tripType = value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _dropdownField(
+                      label: stopCount == 0
+                          ? "Direct"
+                          : stopCount == 1
+                              ? "1 Escale"
+                              : "2+ Escales",
+                      onTap: () async {
+                        final value = await showDialog<int>(
+                          context: context,
+                          builder: (context) => SimpleDialog(
+                            title: const Text("Nombre d'escales"),
+                            children: [
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 0),
+                                child: const Text("Direct"),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 1),
+                                child: const Text("1 Escale"),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 2),
+                                child: const Text("2+ Escales"),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (value != null) setState(() => stopCount = value);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
             ]
-            // =========================================
-            //          FORMULAIRE -> HOTELS
-            // =========================================
+
+            // ---------------- FORMULAIRE HOTELS ----------------
             else ...[
               _buildInputField(
                 icon: Icons.location_on_outlined,
                 text: "Destination",
                 trailingIcon: Icons.edit,
-                onTap: () async {
-                  await _openTextEditor("Destination", "");
-                },
+                onTap: () async => _openTextEditor("Destination", ""),
               ),
               const SizedBox(height: 15),
 
@@ -215,14 +276,12 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                     child: _buildInputField(
                       text: "Arrivée",
                       trailingIcon: Icons.calendar_today,
-                      onTap: () async {
-                        await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2030),
-                        );
-                      },
+                      onTap: () async => showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2030),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -230,14 +289,12 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                     child: _buildInputField(
                       text: "Départ",
                       trailingIcon: Icons.calendar_today,
-                      onTap: () async {
-                        await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2030),
-                        );
-                      },
+                      onTap: () async => showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2030),
+                      ),
                     ),
                   ),
                 ],
@@ -245,7 +302,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
 
-              // Champ Interactif : Adultes + Enfants + Chambres
               _buildInputField(
                 icon: Icons.person_outline,
                 text:
@@ -262,13 +318,11 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                   }
                 },
               ),
-
-              const SizedBox(height: 15),
             ],
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            // =================== BOUTON ===================
+            // BOUTON
             Center(
               child: Container(
                 width: 180,
@@ -289,7 +343,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 60),
           ],
         ),
@@ -302,19 +355,17 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: "",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
         ],
       ),
     );
   }
 
-  // ======================================================
-  //                 WIDGET INPUT FIELD
-  // ======================================================
+  // -----------------------------------------------------
+  // WIDGETS REUTILISABLES
+  // -----------------------------------------------------
+
   Widget _buildInputField({
     IconData? icon,
     required String text,
@@ -347,9 +398,29 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 
-  // ============================
-  //   POPUP EDITEUR TEXTE
-  // ============================
+  Widget _dropdownField({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F3F3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+            const Icon(Icons.keyboard_arrow_down, color: Colors.black87),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<String?> _openTextEditor(String label, String initial) {
     final controller = TextEditingController(text: initial);
 
@@ -374,9 +445,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 
-  // ======================================================
-  //      POPUP : ADULTES / ENFANTS / CHAMBRES (HÔTEL)
-  // ======================================================
   Future<Map<String, int>?> _openHotelGuestsSelector() {
     int adults = hotelAdults;
     int children = hotelChildren;
@@ -429,7 +497,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 
-  // Widget interne pour + / -
   Widget _numberSelector({
     required String label,
     required int value,
@@ -458,9 +525,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
   }
 }
 
-// ======================================================
-//                    TAB BUTTON
-// ======================================================
+// Onglet haut
 class _TabButton extends StatelessWidget {
   final bool isSelected;
   final String label;

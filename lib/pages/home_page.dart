@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'search_flights_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final PageController _servicesController = PageController();
+  int _currentServicePage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -14,18 +22,13 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // =====================================================
-            //                     LOGO EN HAUT
-            // =====================================================
+
             Center(
               child: Column(
                 children: [
                   SizedBox(
                     height: 110,
-                    child: Image.asset(
-                      "assets/images/logo.png",
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.asset("assets/images/logo.png"),
                   ),
                   const Text(
                     "GO TRAVEL",
@@ -35,35 +38,22 @@ class HomePage extends StatelessWidget {
                       color: Color(0xFF265F6A),
                     ),
                   ),
-                  const SizedBox(height: 0),
-                  const Text(
-                    "SERVICES",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF265F6A),
-                    ),
-                  ),
                   const SizedBox(height: 25),
                 ],
               ),
             ),
 
-            // =====================================================
-            //                BARRE DE RECHERCHE
-            // =====================================================
             InkWell(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const SearchFlightsPage()),
+                  MaterialPageRoute(
+                    builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                  ),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 14,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF3F3F3),
                   borderRadius: BorderRadius.circular(12),
@@ -78,49 +68,86 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(color: Colors.grey[700], fontSize: 16),
                       ),
                     ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 18,
-                      color: Colors.grey[700],
-                    ),
+                    Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey[700]),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            // =====================================================
-            //          CARTE "Réservation de vol"
-            // =====================================================
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEDEDED),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
+            SizedBox(
+              height: 120,
+              child: PageView(
+                controller: _servicesController,
+                onPageChanged: (i) {
+                  setState(() => _currentServicePage = i);
+                },
+                children: [
+                  _serviceCard(
                     "Réservation de Vols",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+                    Icons.flight_takeoff,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                        ),
+                      );
+                    },
                   ),
-                  Icon(Icons.flight, size: 40, color: Colors.black87),
+
+                  _serviceCard(
+                    "Réservation d'Hôtels",
+                    Icons.hotel,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SearchFlightsPage(startWithHotel: true),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _serviceCard(
+                    "Visa & Documentation",
+                    Icons.assignment_rounded,
+                    () {},
+                  ),
+
+                  _serviceCard(
+                    "Assurance Voyage",
+                    Icons.health_and_safety,
+                    () {},
+                  ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
-            // =====================================================
-            //                   TITRE POPULAIRES
-            // =====================================================
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                4,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentServicePage == index ? 14 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentServicePage == index
+                        ? const Color(0xFF265F6A)
+                        : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
@@ -134,44 +161,16 @@ class HomePage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // =====================================================
-            //       LISTE SCROLLABLE
-            // =====================================================
             SizedBox(
-              height: 240,
+              height: 230,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _destinationCard(
-                    city: "Caire",
-                    country: "Égypte",
-                    price: 700,
-                    image: "assets/images/caire.png",
-                  ),
-                  _destinationCard(
-                    city: "Oran",
-                    country: "Algérie",
-                    price: 650,
-                    image: "assets/images/oran.png",
-                  ),
-                  _destinationCard(
-                    city: "Paris",
-                    country: "France",
-                    price: 950,
-                    image: "assets/images/paris.png",
-                  ),
-                  _destinationCard(
-                    city: "Santorini",
-                    country: "Grèce",
-                    price: 500,
-                    image: "assets/images/santorini.png",
-                  ),
-                  _destinationCard(
-                    city: "Toronto",
-                    country: "Canada",
-                    price: 850,
-                    image: "assets/images/toronto.jpg",
-                  ),
+                  _destinationCard("Caire", "Égypte", 700, "assets/images/caire.png"),
+                  _destinationCard("Oran", "Algérie", 650, "assets/images/oran.png"),
+                  _destinationCard("Paris", "France", 950, "assets/images/paris.png"),
+                  _destinationCard("Santorini", "Grèce", 500, "assets/images/santorini.png"),
+                  _destinationCard("Toronto", "Canada", 850, "assets/images/toronto.jpg"),
                 ],
               ),
             ),
@@ -181,9 +180,6 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-      // =====================================================
-      //              BOTTOM NAVIGATION BAR
-      // =====================================================
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         selectedItemColor: const Color(0xFF265F6A),
@@ -191,66 +187,66 @@ class HomePage extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: "",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
         ],
       ),
     );
   }
 
-  // =====================================================
-  //             CARTE DESTINATION (Figma style)
-  // =====================================================
-  Widget _destinationCard({
-    required String city,
-    required String country,
-    required int price,
-    required String image,
-  }) {
+  Widget _serviceCard(String title, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEDEDED),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 12.5),
+
+            Icon(icon, size: 46, color: const Color(0xFF265F6A)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _destinationCard(String city, String country, int price, String image) {
     return Container(
       width: 148,
       margin: const EdgeInsets.only(right: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // IMAGE HD
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
+            child: Image.asset(
               image,
               width: 148,
               height: 148,
               fit: BoxFit.cover,
             ),
           ),
-
           const SizedBox(height: 8),
-
-          Text(
-            city,
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
-          ),
-
-          Text(
-            country,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-
-          Text(
-            "\$$price",
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          Text(city, style: const TextStyle(color: Colors.black54, fontSize: 12)),
+          Text(country, style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600)),
+          Text("\$$price", style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700)),
         ],
       ),
     );
