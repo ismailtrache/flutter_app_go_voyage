@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_go_voyage/pages/historique.dart';
 import 'search_flights_page.dart';
+import 'historique.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -180,10 +182,42 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
+      // -----------------------------
+      // 🔥 BOTTOM NAVIGATION ACTIVE 🔥
+      // -----------------------------
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: 0, // Page Home = index 0
         selectedItemColor: const Color(0xFF265F6A),
         unselectedItemColor: Colors.grey,
+
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+              );
+              break;
+
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                ),
+              );
+              break;
+
+            case 2:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HistoriquePage()),
+              );
+              break;
+
+          }
+        },
+
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),

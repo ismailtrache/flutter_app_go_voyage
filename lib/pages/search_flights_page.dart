@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_go_voyage/pages/historique.dart';
+
+import 'home_page.dart';
+import 'historique.dart';
 
 class SearchFlightsPage extends StatefulWidget {
-  /// false = commencer sur Vols
-  /// true  = commencer sur Hotels
   final bool startWithHotel;
 
   const SearchFlightsPage({super.key, this.startWithHotel = false});
@@ -14,11 +16,9 @@ class SearchFlightsPage extends StatefulWidget {
 class _SearchFlightsPageState extends State<SearchFlightsPage> {
   late bool isFlightSelected;
 
-  // Champs de texte
   final fromController = TextEditingController(text: "Toronto");
   final toController = TextEditingController(text: "New York");
 
-  // Dates
   DateTime? departDate;
   DateTime? retourDate;
 
@@ -30,7 +30,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
   int hotelChildren = 0;
   int hotelRooms = 1;
 
-  // 🔥 Nouveau : Aller-retour + escales
+  // Aller-retour + escales
   int tripType = 0; // 0 = Aller-Retour, 1 = Aller simple
   int stopCount = 0; // 0 = Direct, 1 = 1 escale, 2 = 2+ escales
 
@@ -109,8 +109,13 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: fromController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor("Ville de départ", fromController.text);
-                  if (value != null) setState(() => fromController.text = value);
+                  final value = await _openTextEditor(
+                    "Ville de départ",
+                    fromController.text,
+                  );
+                  if (value != null) {
+                    setState(() => fromController.text = value);
+                  }
                 },
               ),
               const SizedBox(height: 15),
@@ -120,8 +125,13 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: toController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor("Ville d'arrivée", toController.text);
-                  if (value != null) setState(() => toController.text = value);
+                  final value = await _openTextEditor(
+                    "Ville d'arrivée",
+                    toController.text,
+                  );
+                  if (value != null) {
+                    setState(() => toController.text = value);
+                  }
                 },
               ),
 
@@ -143,7 +153,9 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           firstDate: DateTime.now(),
                           lastDate: DateTime(2030),
                         );
-                        if (selected != null) setState(() => departDate = selected);
+                        if (selected != null) {
+                          setState(() => departDate = selected);
+                        }
                       },
                     ),
                   ),
@@ -161,7 +173,9 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           firstDate: departDate ?? DateTime.now(),
                           lastDate: DateTime(2030),
                         );
-                        if (selected != null) setState(() => retourDate = selected);
+                        if (selected != null) {
+                          setState(() => retourDate = selected);
+                        }
                       },
                     ),
                   ),
@@ -189,13 +203,15 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                       ],
                     ),
                   );
-                  if (value != null) setState(() => adults = value);
+                  if (value != null) {
+                    setState(() => adults = value);
+                  }
                 },
               ),
 
               const SizedBox(height: 15),
 
-              // 🔥 Aller-Retour + Escales
+              // Aller-Retour + Escales
               Row(
                 children: [
                   Expanded(
@@ -218,7 +234,9 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                             ],
                           ),
                         );
-                        if (value != null) setState(() => tripType = value);
+                        if (value != null) {
+                          setState(() => tripType = value);
+                        }
                       },
                     ),
                   ),
@@ -251,13 +269,14 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                             ],
                           ),
                         );
-                        if (value != null) setState(() => stopCount = value);
+                        if (value != null) {
+                          setState(() => stopCount = value);
+                        }
                       },
                     ),
                   ),
                 ],
               ),
-
             ]
 
             // ---------------- FORMULAIRE HOTELS ----------------
@@ -348,15 +367,47 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
         ),
       ),
 
+      // ---------------- BOTTOM NAVIGATION ----------------
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: 1, // On est sur Recherche
         selectedItemColor: const Color(0xFF265F6A),
         unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if (index == 0) {
+            // Home
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+            );
+          } else if (index == 1) {
+            // Recherche -> déjà ici
+          } else if (index == 2) {
+            // Historique (on utilise l'icône Shopping Bag)
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HistoriquePage()),
+            );
+          } else if (index == 3) {
+            // Profil -> visible mais aucune action
+          }
+        },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: "",
+          ),
         ],
       ),
     );
@@ -413,7 +464,10 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+            ),
             const Icon(Icons.keyboard_arrow_down, color: Colors.black87),
           ],
         ),
