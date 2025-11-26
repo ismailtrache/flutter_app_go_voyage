@@ -4,6 +4,7 @@ import 'package:flutter_app_go_voyage/pages/search_results_page.dart';
 
 import 'home_page.dart';
 import 'historique.dart';
+import 'profile_page.dart'; 
 
 class SearchFlightsPage extends StatefulWidget {
   final bool startWithHotel;
@@ -23,17 +24,14 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
   DateTime? departDate;
   DateTime? retourDate;
 
-  // Adultes vol
   int adults = 2;
 
-  // Hôtel
   int hotelAdults = 2;
   int hotelChildren = 0;
   int hotelRooms = 1;
 
-  // Aller-retour + escales
-  int tripType = 0; // 0 = Aller-Retour, 1 = Aller simple
-  int stopCount = 0; // 0 = Direct, 1 = 1 escale, 2 = 2+ escales
+  int tripType = 0;  
+  int stopCount = 0; 
 
   @override
   void initState() {
@@ -53,7 +51,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
           children: [
             const SizedBox(height: 20),
 
-            // LOGO
             Center(
               child: Column(
                 children: [
@@ -72,7 +69,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               ),
             ),
 
-            // Onglets Vols / Hotels
             Container(
               height: 55,
               decoration: BoxDecoration(
@@ -110,10 +106,8 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: fromController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor(
-                    "Ville de départ",
-                    fromController.text,
-                  );
+                  final value =
+                      await _openTextEditor("Ville de départ", fromController.text);
                   if (value != null) {
                     setState(() => fromController.text = value);
                   }
@@ -126,10 +120,8 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: toController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value = await _openTextEditor(
-                    "Ville d'arrivée",
-                    toController.text,
-                  );
+                  final value =
+                      await _openTextEditor("Ville d'arrivée", toController.text);
                   if (value != null) {
                     setState(() => toController.text = value);
                   }
@@ -138,7 +130,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
 
-              // Dates aller + retour
               Row(
                 children: [
                   Expanded(
@@ -185,7 +176,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
 
-              // Adultes
               _buildInputField(
                 icon: Icons.person_outline,
                 text: "$adults Adultes",
@@ -212,7 +202,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
               const SizedBox(height: 15),
 
-              // Aller-Retour + Escales
               Row(
                 children: [
                   Expanded(
@@ -342,87 +331,112 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
             const SizedBox(height: 30),
 
-            // BOUTON
             Center(
-  child: SizedBox(
-    width: 180,
-    child: ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => SearchResultsPage(
-              from: fromController.text,
-              to: toController.text,
-              departDate: departDate,
-              retourDate: retourDate,
-              adults: adults,
+              child: SizedBox(
+                width: 180,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SearchResultsPage(
+                          from: fromController.text,
+                          to: toController.text,
+                          departDate: departDate,
+                          retourDate: retourDate,
+                          adults: adults,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 241, 243, 244),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    isFlightSelected ? "Rechercher" : "Voir les offres",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 241, 243, 244),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: Text(
-        isFlightSelected ? "Rechercher" : "Voir les offres",
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ),
-  ),
-),
-
-
           ],
         ),
       ),
 
-      // ---------------- BOTTOM NAVIGATION ----------------
+      // -------------------------------
+      // 🔥 BOTTOM NAVIGATION UNIFORME 🔥
+      // -------------------------------
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1, // On est sur Recherche
+        type: BottomNavigationBarType.fixed,
+        currentIndex: 1, // Ici : page Recherche
         selectedItemColor: const Color(0xFF265F6A),
         unselectedItemColor: Colors.grey,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        iconSize: 28,
+
         onTap: (index) {
-          if (index == 0) {
-            // Home
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const HomePage()),
-            );
-          } else if (index == 1) {
-            // Recherche -> déjà ici
-          } else if (index == 2) {
-            // Historique (on utilise l'icône Shopping Bag)
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const HistoriquePage()),
-            );
-          } else if (index == 3) {
-            // Profil -> visible mais aucune action
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+              );
+              break;
+
+            case 1:
+              break; // page actuelle
+
+            case 2:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HistoriquePage()),
+              );
+              break;
+
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+              break;
           }
         },
+
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.home_outlined),
+            ),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.search),
+            ),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.shopping_bag_outlined),
+            ),
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.person_outline),
+            ),
             label: "",
           ),
         ],

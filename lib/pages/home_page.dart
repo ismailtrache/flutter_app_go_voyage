@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_go_voyage/pages/historique.dart';
 import 'search_flights_page.dart';
 import 'historique.dart';
+import 'profile_page.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,7 +25,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Center(
               child: Column(
                 children: [
@@ -50,12 +50,14 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                    builder: (_) =>
+                        const SearchFlightsPage(startWithHotel: false),
                   ),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF3F3F3),
                   borderRadius: BorderRadius.circular(12),
@@ -67,10 +69,17 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: Text(
                         "Où voulez-vous aller ?",
-                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey[700]),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 18,
+                      color: Colors.grey[700],
+                    ),
                   ],
                 ),
               ),
@@ -93,12 +102,13 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                          builder: (_) => const SearchFlightsPage(
+                            startWithHotel: false,
+                          ),
                         ),
                       );
                     },
                   ),
-
                   _serviceCard(
                     "Réservation d'Hôtels",
                     Icons.hotel,
@@ -106,18 +116,18 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const SearchFlightsPage(startWithHotel: true),
+                          builder: (_) => const SearchFlightsPage(
+                            startWithHotel: true,
+                          ),
                         ),
                       );
                     },
                   ),
-
                   _serviceCard(
                     "Visa & Documentation",
                     Icons.assignment_rounded,
                     () {},
                   ),
-
                   _serviceCard(
                     "Assurance Voyage",
                     Icons.health_and_safety,
@@ -155,7 +165,10 @@ class _HomePageState extends State<HomePage> {
               children: const [
                 Text(
                   "Destinations populaires",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 Icon(Icons.arrow_forward_ios, size: 18),
               ],
@@ -168,11 +181,36 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _destinationCard("Caire", "Égypte", 700, "assets/images/caire.png"),
-                  _destinationCard("Oran", "Algérie", 650, "assets/images/oran.png"),
-                  _destinationCard("Paris", "France", 950, "assets/images/paris.png"),
-                  _destinationCard("Santorini", "Grèce", 500, "assets/images/santorini.png"),
-                  _destinationCard("Toronto", "Canada", 850, "assets/images/toronto.jpg"),
+                  _destinationCard(
+                    "Caire",
+                    "Égypte",
+                    700,
+                    "assets/images/caire.png",
+                  ),
+                  _destinationCard(
+                    "Oran",
+                    "Algérie",
+                    650,
+                    "assets/images/oran.png",
+                  ),
+                  _destinationCard(
+                    "Paris",
+                    "France",
+                    950,
+                    "assets/images/paris.png",
+                  ),
+                  _destinationCard(
+                    "Santorini",
+                    "Grèce",
+                    500,
+                    "assets/images/santorini.png",
+                  ),
+                  _destinationCard(
+                    "Toronto",
+                    "Canada",
+                    850,
+                    "assets/images/toronto.jpg",
+                  ),
                 ],
               ),
             ),
@@ -183,27 +221,28 @@ class _HomePageState extends State<HomePage> {
       ),
 
       // -----------------------------
-      // 🔥 BOTTOM NAVIGATION ACTIVE 🔥
+      // BOTTOM NAVIGATION BAR 
       // -----------------------------
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: 0, // Page Home = index 0
         selectedItemColor: const Color(0xFF265F6A),
         unselectedItemColor: Colors.grey,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        iconSize: 28, 
 
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
-              );
               break;
 
             case 1:
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const SearchFlightsPage(startWithHotel: false),
+                  builder: (_) =>
+                      const SearchFlightsPage(startWithHotel: false),
                 ),
               );
               break;
@@ -211,18 +250,52 @@ class _HomePageState extends State<HomePage> {
             case 2:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const HistoriquePage()),
+                MaterialPageRoute(
+                  builder: (_) => const HistoriquePage(),
+                ),
               );
               break;
 
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ProfilePage(),
+                ),
+              );
+              break;
           }
         },
 
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.home_outlined),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.search),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.shopping_bag_outlined),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.person_outline),
+            ),
+            label: "",
+          ),
         ],
       ),
     );
@@ -251,17 +324,24 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-
             const SizedBox(width: 12.5),
-
-            Icon(icon, size: 46, color: const Color(0xFF265F6A)),
+            Icon(
+              icon,
+              size: 46,
+              color: const Color(0xFF265F6A),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _destinationCard(String city, String country, int price, String image) {
+  Widget _destinationCard(
+    String city,
+    String country,
+    int price,
+    String image,
+  ) {
     return Container(
       width: 148,
       margin: const EdgeInsets.only(right: 18),
@@ -278,9 +358,29 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(city, style: const TextStyle(color: Colors.black54, fontSize: 12)),
-          Text(country, style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600)),
-          Text("\$$price", style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(
+            city,
+            style: const TextStyle(
+              color: Colors.black54,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            country,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text(
+            "\$$price",
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
