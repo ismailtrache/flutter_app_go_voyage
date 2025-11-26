@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_go_voyage/pages/historique.dart';
+import 'package:flutter_app_go_voyage/pages/search_results_page.dart';
 
 import 'home_page.dart';
 import 'historique.dart';
@@ -343,26 +344,42 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
 
             // BOUTON
             Center(
-              child: Container(
-                width: 180,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF265F6A),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    isFlightSelected ? "Rechercher" : "Voir les offres",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
+  child: SizedBox(
+    width: 180,
+    child: ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SearchResultsPage(
+              from: fromController.text,
+              to: toController.text,
+              departDate: departDate,
+              retourDate: retourDate,
+              adults: adults,
             ),
-            const SizedBox(height: 60),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 241, 243, 244),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Text(
+        isFlightSelected ? "Rechercher" : "Voir les offres",
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+  ),
+),
+
+
           ],
         ),
       ),
