@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_method_page.dart';
 
 class CheapestFlightDetails extends StatelessWidget {
   final Map<String, dynamic> vol;
@@ -90,36 +91,45 @@ class CheapestFlightDetails extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // PRICE + BUTTON
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primary,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    "Reserver ce vol",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+// PRICE + BUTTON
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PaymentMethodPage(vol: vol),
+          ),
+        );
+      },
+      child: const Text(
+        "Reserver ce vol",
+        style: TextStyle(fontSize: 16, color: Colors.white),
+      ),
+    ),
 
-                Text(
-                  "\$${vol["price"]}",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: primary,
-                  ),
-                ),
-              ],
-            ),
+    Text(
+      "\$${vol["price"]}",
+      style: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: primary,
+      ),
+    ),
+  ],
+),
+
+  
+
 
             const SizedBox(height: 40),
           ],
