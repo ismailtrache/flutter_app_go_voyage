@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'home_page.dart';
+import 'search_flights_page.dart';
+import 'profile_page.dart';
 
 class HistoriquePage extends StatefulWidget {
   const HistoriquePage({super.key});
@@ -11,7 +14,6 @@ class _HistoriquePageState extends State<HistoriquePage> {
   bool _showUpcoming = true; // true = À venir, false = Passés
   String _searchQuery = '';
 
-  // ---- Données mock (tu pourras brancher sur ton backend plus tard) ----
   final List<_TripItem> _upcomingTrips = const [
     _TripItem(
       title: 'Vol vers Paris...',
@@ -48,17 +50,18 @@ class _HistoriquePageState extends State<HistoriquePage> {
     final Color primary = const Color(0xFF265F6A);
     final Color bgSecondary = const Color(0xFFF5F5F5);
 
-    // Liste filtrée selon l’onglet + la recherche
-    final List<_TripItem> visibleTrips = (_showUpcoming ? _upcomingTrips : _pastTrips)
-        .where(
-          (t) =>
-              t.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              t.subtitle.toLowerCase().contains(_searchQuery.toLowerCase()),
-        )
-        .toList();
+    final List<_TripItem> visibleTrips =
+        (_showUpcoming ? _upcomingTrips : _pastTrips)
+            .where((t) =>
+                t.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                t.subtitle
+                    .toLowerCase()
+                    .contains(_searchQuery.toLowerCase()))
+            .toList();
 
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -93,9 +96,7 @@ class _HistoriquePageState extends State<HistoriquePage> {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() => _showUpcoming = true);
-                      },
+                      onTap: () => setState(() => _showUpcoming = true),
                       child: _SegmentTab(
                         label: 'À venir',
                         isSelected: _showUpcoming,
@@ -105,9 +106,7 @@ class _HistoriquePageState extends State<HistoriquePage> {
                   ),
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() => _showUpcoming = false);
-                      },
+                      onTap: () => setState(() => _showUpcoming = false),
                       child: _SegmentTab(
                         label: 'Passés',
                         isSelected: !_showUpcoming,
@@ -183,17 +182,76 @@ class _HistoriquePageState extends State<HistoriquePage> {
         ),
       ),
 
-      // ====================== Bottom Navigation Bar ===========================
+      // ====================== 🔥 BOTTOM NAVIGATION UNIFORME ======================
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // par ex. 2 = onglet "bag" / voyages
+        type: BottomNavigationBarType.fixed,
+        currentIndex: 2, // Historique
         selectedItemColor: primary,
         unselectedItemColor: Colors.grey,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        iconSize: 28,
+
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const HomePage()),
+              );
+              break;
+
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const SearchFlightsPage(startWithHotel: false),
+                ),
+              );
+              break;
+
+            case 2:
+              break; // déjà ici
+
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+              break;
+          }
+        },
+
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.home_outlined),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.search),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.shopping_bag_outlined),
+            ),
+            label: "",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Icon(Icons.person_outline),
+            ),
+            label: "",
+          ),
         ],
       ),
     );
@@ -289,7 +347,6 @@ class _TripCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Texte
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
