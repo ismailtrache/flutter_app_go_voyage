@@ -52,11 +52,11 @@ class _HistoriquePageState extends State<HistoriquePage> {
 
     final List<_TripItem> visibleTrips =
         (_showUpcoming ? _upcomingTrips : _pastTrips)
-            .where((t) =>
-                t.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                t.subtitle
-                    .toLowerCase()
-                    .contains(_searchQuery.toLowerCase()))
+            .where(
+              (t) =>
+                  t.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                  t.subtitle.toLowerCase().contains(_searchQuery.toLowerCase()),
+            )
             .toList();
 
     return Scaffold(
@@ -159,10 +159,7 @@ class _HistoriquePageState extends State<HistoriquePage> {
                         _showUpcoming
                             ? 'Aucun voyage à venir.'
                             : 'Aucun voyage passé.',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 15,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 15),
                       ),
                     )
                   : ListView.separated(
@@ -377,11 +374,7 @@ class _TripCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Icon(
-            icon,
-            size: 24,
-            color: primary,
-          ),
+          Icon(icon, size: 24, color: primary),
         ],
       ),
     );
