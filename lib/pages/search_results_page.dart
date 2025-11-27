@@ -85,14 +85,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     ];
   }
 
-  
   void applySorting() {
     setState(() {
       if (selectedTab == 1) {
         // ⬅ Le moins cher
         flights.sort((a, b) => a["price"].compareTo(b["price"]));
       } else if (selectedTab == 2) {
-      
         flights.sort((a, b) => a["duration"].compareTo(b["duration"]));
       }
     });
@@ -140,8 +138,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${widget.from}  →  ${widget.to}",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  Text(
+                    "${widget.from}  →  ${widget.to}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   Text(
                     "${widget.departDate!.day}/${widget.departDate!.month}/${widget.departDate!.year} - "
@@ -178,7 +181,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ""),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: "",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
         ],
       ),
@@ -238,16 +244,26 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(vol["airline"],
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text(vol["flightNumber"],
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  Text(
+                    vol["airline"],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    vol["flightNumber"],
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  ),
                   const SizedBox(height: 10),
-                  Text("${vol["depart"]}  →  ${vol["arrive"]}",
-                      style: const TextStyle(fontSize: 14)),
-                  Text("${vol["returnDepart"]}  →  ${vol["returnArrive"]}",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  Text(
+                    "${vol["depart"]}  →  ${vol["arrive"]}",
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  Text(
+                    "${vol["returnDepart"]}  →  ${vol["returnArrive"]}",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  ),
                 ],
               ),
             ),
@@ -255,7 +271,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             Text(
               "\$${vol["price"]}",
               style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ],
         ),
