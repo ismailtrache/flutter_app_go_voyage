@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_go_voyage/pages/historique.dart';
-import 'package:flutter_app_go_voyage/pages/search_results_page.dart';
+import 'package:flutter_app_go_voyage/pages/lib/pages/historique.dart';
+import 'package:flutter_app_go_voyage/pages/lib/pages/search_results_page.dart';
 
 import 'home_page.dart';
 import 'historique.dart';

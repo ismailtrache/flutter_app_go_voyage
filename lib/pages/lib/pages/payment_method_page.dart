@@ -109,7 +109,8 @@ class PaymentMethodPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const PaymentSuccessPage(),
+                      builder: (_) => PaymentSuccessPage(vol: vol),
+
                     ),
                   );
                 },
