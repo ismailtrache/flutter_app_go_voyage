@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_go_voyage/pages/historique.dart';
+import 'package:flutter_app_go_voyage/pages/lib/pages/historique.dart';
 import 'search_flights_page.dart';
 import 'historique.dart';
 import 'profile_page.dart';
