@@ -197,6 +197,36 @@ class _HomePageState extends State<HomePage> {
                     850,
                     "assets/images/toronto.jpg",
                   ),
+                  _destinationCard(
+                    "Sharm El Sheikh",
+                    "Égypte",
+                    680,
+                    "assets/images/SharmElSheikh.jpg",
+                  ),
+                  _destinationCard(
+                    "Dubai",
+                    "Émirats Arabes Unis",
+                    800,
+                    "assets/images/dubai.png",
+                  ),
+                  _destinationCard(
+                    "Guangzhou",
+                    "Chine",
+                    900,
+                    "assets/images/guangzhou.jpg",
+                  ),
+                  _destinationCard(
+                    "Sousse",
+                    "Tunisie",
+                    550,
+                    "assets/images/sousse.jpg",
+                  ),
+                  _destinationCard(
+                    "Tunis",
+                    "Tunisie",
+                    580,
+                    "assets/images/tunisia.jpg",
+                  ),
                 ],
               ),
             ),
@@ -375,7 +405,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
 // ------------------------------------------------------------
 // 🔥 PAGE DE DÉTAILS (DANS LE MÊME FICHIER)
 // ------------------------------------------------------------
@@ -397,7 +426,10 @@ class DestinationDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("$city, $country", style: const TextStyle(color: Colors.white)),
+        title: Text(
+          "$city, $country",
+          style: const TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF265F6A),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -407,7 +439,6 @@ class DestinationDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: Image.asset(
@@ -422,18 +453,12 @@ class DestinationDetailsPage extends StatelessWidget {
 
             Text(
               city,
-              style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             Text(
               country,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black54,
-              ),
+              style: const TextStyle(fontSize: 18, color: Colors.black54),
             ),
 
             const SizedBox(height: 15),
@@ -486,10 +511,7 @@ class DestinationDetailsPage extends StatelessWidget {
         children: [
           Icon(icon, color: const Color(0xFF265F6A), size: 28),
           const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 16),
-          ),
+          Text(title, style: const TextStyle(fontSize: 16)),
         ],
       ),
     );
