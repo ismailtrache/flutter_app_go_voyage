@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'search_flights_page.dart';
 import 'profile_page.dart';
+import 'ticket_page.dart'; // ✅ pour afficher le billet + télécharger le PDF
 
 class HistoriquePage extends StatefulWidget {
   const HistoriquePage({super.key});
@@ -401,7 +402,7 @@ class _TripCard extends StatelessWidget {
 }
 
 // ===================================================================
-//  NOUVELLE PAGE : DÉTAILS DU VOYAGE
+//  PAGE : DÉTAILS DU VOYAGE
 // ===================================================================
 
 class TripDetailsPage extends StatelessWidget {
@@ -462,7 +463,8 @@ class TripDetailsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        Text
+                        (
                           item.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -499,7 +501,6 @@ class TripDetailsPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Quelques infos supplémentaires "fake" pour remplir
             const Text(
               'Informations supplémentaires',
               style: TextStyle(
@@ -554,13 +555,23 @@ class TripDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade400,
+                    backgroundColor: const Color(0xFF265F6A),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: null, // 🔒 Visible mais non cliquable
+                  // ✅ Lien vers TicketPage (billet complet + PDF)
+                  onPressed: () {
+                    final volData = _buildVolDataForItem(item);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TicketPage(vol: volData),
+                      ),
+                    );
+                  },
                   child: const Text(
                     'Afficher le billet',
                     style: TextStyle(
@@ -578,5 +589,63 @@ class TripDetailsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Construit la Map<String, dynamic> attendue par TicketPage / ticket_pdf.dart
+  Map<String, dynamic> _buildVolDataForItem(_TripItem item) {
+    // 🔹 Tu peux adapter ces données comme tu veux, ici c’est du démo.
+    if (item.subtitle.contains('(YYZ)') && item.subtitle.contains('(CDG)')) {
+      // Vol vers Paris
+      return {
+        "flightNumber": "GT1234",
+        "depart": "15 Mai 10:35",
+        "arrive": "15 Mai 22:15",
+        "from": "Toronto",
+        "fromCode": "YYZ",
+        "to": "Paris",
+        "toCode": "CDG",
+        "cabin": "Economy",
+        "price": "750",
+      };
+    } else if (item.subtitle.contains('(YYZ)') && item.subtitle.contains('(YUL)')) {
+      // Vol vers Montréal
+      return {
+        "flightNumber": "GT5678",
+        "depart": "28 Jul 09:00",
+        "arrive": "28 Jul 10:15",
+        "from": "Toronto",
+        "fromCode": "YYZ",
+        "to": "Montréal",
+        "toCode": "YUL",
+        "cabin": "Economy",
+        "price": "220",
+      };
+    } else if (item.subtitle.contains('(YYZ)') && item.subtitle.contains('(FCO)')) {
+      // Vol vers Rome (même si vol passé, pour réutilisation éventuelle)
+      return {
+        "flightNumber": "GT9012",
+        "depart": "10 Jan 13:20",
+        "arrive": "10 Jan 23:55",
+        "from": "Toronto",
+        "fromCode": "YYZ",
+        "to": "Rome",
+        "toCode": "FCO",
+        "cabin": "Economy",
+        "price": "680",
+      };
+    }
+
+    // Valeurs par défaut si jamais
+    return {
+      "flightNumber": "GT0000",
+      "depart": "Date inconnue",
+      "arrive": "Date inconnue",
+      "from": "Ville départ",
+      "fromCode": "XXX",
+      "to": "Ville arrivée",
+      "toCode": "YYY",
+      "cabin": "Economy",
+      "price": "0",
+    };
   }
 }
