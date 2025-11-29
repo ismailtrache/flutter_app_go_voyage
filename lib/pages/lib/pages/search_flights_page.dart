@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_go_voyage/pages/historique.dart';
-import 'package:flutter_app_go_voyage/pages/search_results_page.dart';
+import 'package:flutter_app_go_voyage/pages/lib/pages/historique.dart';
+import 'package:flutter_app_go_voyage/pages/lib/pages/search_results_page.dart';
 
 import 'home_page.dart';
 import 'historique.dart';
-import 'profile_page.dart'; 
+import 'profile_page.dart';
 
 class SearchFlightsPage extends StatefulWidget {
   final bool startWithHotel;
@@ -30,8 +30,8 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
   int hotelChildren = 0;
   int hotelRooms = 1;
 
-  int tripType = 0;  
-  int stopCount = 0; 
+  int tripType = 0;
+  int stopCount = 0;
 
   @override
   void initState() {
@@ -106,8 +106,10 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: fromController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value =
-                      await _openTextEditor("Ville de départ", fromController.text);
+                  final value = await _openTextEditor(
+                    "Ville de départ",
+                    fromController.text,
+                  );
                   if (value != null) {
                     setState(() => fromController.text = value);
                   }
@@ -120,8 +122,10 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 text: toController.text,
                 trailingIcon: Icons.edit,
                 onTap: () async {
-                  final value =
-                      await _openTextEditor("Ville d'arrivée", toController.text);
+                  final value = await _openTextEditor(
+                    "Ville d'arrivée",
+                    toController.text,
+                  );
                   if (value != null) {
                     setState(() => toController.text = value);
                   }
@@ -236,8 +240,8 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                       label: stopCount == 0
                           ? "Direct"
                           : stopCount == 1
-                              ? "1 Escale"
-                              : "2+ Escales",
+                          ? "1 Escale"
+                          : "2+ Escales",
                       onTap: () async {
                         final value = await showDialog<int>(
                           context: context,
@@ -268,7 +272,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 ],
               ),
             ]
-
             // ---------------- FORMULAIRE HOTELS ----------------
             else ...[
               _buildInputField(
@@ -480,10 +483,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 
-  Widget _dropdownField({
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _dropdownField({required String label, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(
