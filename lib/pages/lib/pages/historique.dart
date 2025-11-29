@@ -172,10 +172,24 @@ class _HistoriquePageState extends State<HistoriquePage> {
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final trip = visibleTrips[index];
-                        return _TripCard(
-                          item: trip,
-                          bgColor: bgSecondary,
-                          primary: primary,
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => TripDetailsPage(
+                                  item: trip,
+                                  isUpcoming: _showUpcoming,
+                                ),
+                              ),
+                            );
+                          },
+                          child: _TripCard(
+                            item: trip,
+                            bgColor: bgSecondary,
+                            primary: primary,
+                          ),
                         );
                       },
                     ),
@@ -381,6 +395,187 @@ class _TripCard extends StatelessWidget {
           const SizedBox(width: 10),
           Icon(icon, size: 24, color: primary),
         ],
+      ),
+    );
+  }
+}
+
+// ===================================================================
+//  NOUVELLE PAGE : DÉTAILS DU VOYAGE
+// ===================================================================
+
+class TripDetailsPage extends StatelessWidget {
+  final _TripItem item;
+  final bool isUpcoming;
+
+  const TripDetailsPage({
+    super.key,
+    required this.item,
+    required this.isUpcoming,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color primary = const Color(0xFF265F6A);
+    final bool isFlight = item.type == TripType.flight;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Détails du voyage',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Carte principale avec les infos
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    isFlight ? Icons.flight_takeoff : Icons.hotel,
+                    size: 32,
+                    color: primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          item.subtitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF828282),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isFlight ? 'Type : Vol' : 'Type : Hôtel',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Quelques infos supplémentaires "fake" pour remplir
+            const Text(
+              'Informations supplémentaires',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Passager : John Doe\nNuméro de réservation : ABC123\nCompagnie : GO Travel Airlines',
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Colors.black87,
+              ),
+            ),
+
+            const Spacer(),
+
+            // Boutons spécifiques aux VOLS À VENIR
+            if (isFlight && isUpcoming) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primary,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Modification du vol (démo UI)'),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Modifier le vol',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade400,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: null, // 🔒 Visible mais non cliquable
+                  child: const Text(
+                    'Afficher le billet',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
