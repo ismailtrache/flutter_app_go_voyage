@@ -7,6 +7,8 @@ class SearchResultsPage extends StatefulWidget {
   final DateTime? departDate;
   final DateTime? retourDate;
   final int adults;
+  final int tripType; // 0 = Aller-Retour, 1 = Aller simple
+  final int stopCount; // 0 direct, 1 = 1 escale, 2 = 2+
 
   const SearchResultsPage({
     super.key,
@@ -15,6 +17,8 @@ class SearchResultsPage extends StatefulWidget {
     required this.departDate,
     required this.retourDate,
     required this.adults,
+    required this.tripType,
+    required this.stopCount,
   });
 
   @override
@@ -29,24 +33,47 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   void initState() {
     super.initState();
+    flights = _buildFlights();
+    _applySorting();
+  }
 
-    flights = [
+  List<Map<String, dynamic>> _buildFlights() {
+    final base = [
       {
         "airline": "Air Canada",
         "flightNumber": "AC-421",
         "cabin": "Economy",
         "price": 310,
         "duration": 4.30,
-        "depart": "15 Oct · 4:30 pm",
-        "arrive": "7:50 am",
-        "returnDepart": "20 Oct · 4:30 pm",
-        "returnArrive": "7:50 am",
-        "image": "assets/images/eco_seat.jpg",
-        "services": ["Repas", "WiFi", "Divertissement"],
-        "from": widget.from,
-        "to": widget.to,
-        "fromCode": "YYZ",
-        "toCode": "JFK",
+        "departTime": "08:40",
+        "arrivalTime": "12:55",
+        "returnDepartTime": "18:40",
+        "returnArriveTime": "22:55",
+        "stops": 0,
+      },
+      {
+        "airline": "WestJet",
+        "flightNumber": "WS-202",
+        "cabin": "Economy",
+        "price": 290,
+        "duration": 4.05,
+        "departTime": "11:05",
+        "arrivalTime": "15:10",
+        "returnDepartTime": "17:10",
+        "returnArriveTime": "21:30",
+        "stops": 0,
+      },
+      {
+        "airline": "Air Transat",
+        "flightNumber": "TS-310",
+        "cabin": "Economy",
+        "price": 330,
+        "duration": 4.00,
+        "departTime": "06:50",
+        "arrivalTime": "10:50",
+        "returnDepartTime": "21:00",
+        "returnArriveTime": "01:05",
+        "stops": 0,
       },
       {
         "airline": "American Airlines",
@@ -54,50 +81,135 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         "cabin": "Business",
         "price": 350,
         "duration": 3.50,
-        "depart": "15 Oct · 5:30 pm",
-        "arrive": "8:50 am",
-        "returnDepart": "20 Oct · 5:30 pm",
-        "returnArrive": "8:50 am",
-        "image": "assets/images/business_seat.jpg",
-        "services": ["Repas Premium", "WiFi+", "Salon VIP"],
-        "from": widget.from,
-        "to": widget.to,
-        "fromCode": "YYZ",
-        "toCode": "JFK",
+        "departTime": "09:10",
+        "arrivalTime": "12:40",
+        "returnDepartTime": "17:30",
+        "returnArriveTime": "21:00",
+        "stops": 1,
+      },
+      {
+        "airline": "British Airways",
+        "flightNumber": "BA-215",
+        "cabin": "Economy",
+        "price": 280,
+        "duration": 4.50,
+        "departTime": "13:20",
+        "arrivalTime": "17:50",
+        "returnDepartTime": "16:30",
+        "returnArriveTime": "21:10",
+        "stops": 1,
+      },
+      {
+        "airline": "Delta",
+        "flightNumber": "DL-340",
+        "cabin": "Premium Economy",
+        "price": 320,
+        "duration": 4.10,
+        "departTime": "10:25",
+        "arrivalTime": "14:35",
+        "returnDepartTime": "19:15",
+        "returnArriveTime": "23:20",
+        "stops": 1,
       },
       {
         "airline": "United Airlines",
         "flightNumber": "UA-887",
-        "cabin": "First Class",
+        "cabin": "First",
         "price": 300,
         "duration": 2.45,
-        "depart": "15 Oct · 4:30 pm",
-        "arrive": "7:50 am",
-        "returnDepart": "20 Oct · 4:30 pm",
-        "returnArrive": "7:50 am",
-        "image": "assets/images/first_seat.jpg",
-        "services": ["Champagne", "Suite Privée", "VIP Service"],
-        "from": widget.from,
-        "to": widget.to,
-        "fromCode": "YYZ",
-        "toCode": "JFK",
+        "departTime": "07:55",
+        "arrivalTime": "10:40",
+        "returnDepartTime": "19:25",
+        "returnArriveTime": "22:10",
+        "stops": 2,
+      },
+      {
+        "airline": "Lufthansa",
+        "flightNumber": "LH-604",
+        "cabin": "Business",
+        "price": 370,
+        "duration": 5.10,
+        "departTime": "12:05",
+        "arrivalTime": "17:15",
+        "returnDepartTime": "14:50",
+        "returnArriveTime": "20:05",
+        "stops": 2,
+      },
+      {
+        "airline": "Air France",
+        "flightNumber": "AF-718",
+        "cabin": "Economy",
+        "price": 265,
+        "duration": 5.30,
+        "departTime": "15:40",
+        "arrivalTime": "21:10",
+        "returnDepartTime": "13:25",
+        "returnArriveTime": "18:55",
+        "stops": 2,
       },
     ];
+
+    bool matchesStops(int s) {
+      if (widget.stopCount == 0) return s == 0;
+      if (widget.stopCount == 1) return s <= 1;
+      return true;
+    }
+
+    String? formatDate(DateTime? d) =>
+        d == null ? null : "${d.day}/${d.month}/${d.year}";
+    String stopLabel(int s) =>
+        s == 0 ? "Direct" : s == 1 ? "1 escale" : "2+ escales";
+
+    final filtered = base
+        .where((r) => matchesStops(r["stops"] as int))
+        .take(5)
+        .toList();
+
+    return filtered
+        .map((r) {
+          final departStr =
+              "${formatDate(widget.departDate) ?? "Date a definir"} - ${r["departTime"]}";
+          final returnDepartStr = widget.tripType == 0
+              ? "${formatDate(widget.retourDate) ?? "Date retour ?"} - ${r["returnDepartTime"]}"
+              : null;
+
+          return {
+            ...r,
+            "depart": departStr,
+            "arrive": r["arrivalTime"],
+            "returnDepart": returnDepartStr,
+            "returnArrive": widget.tripType == 0 ? r["returnArriveTime"] : null,
+            "from": widget.from,
+            "to": widget.to,
+            "fromCode": "YYZ",
+            "toCode": "JFK",
+            "stopsLabel": stopLabel(r["stops"] as int),
+          };
+        })
+        .toList();
   }
 
-  void applySorting() {
-    setState(() {
-      if (selectedTab == 1) {
-        // ⬅ Le moins cher
-        flights.sort((a, b) => a["price"].compareTo(b["price"]));
-      } else if (selectedTab == 2) {
-        flights.sort((a, b) => a["duration"].compareTo(b["duration"]));
-      }
-    });
+  void _applySorting() {
+    if (selectedTab == 1) {
+      flights.sort((a, b) => a["price"].compareTo(b["price"]));
+    } else if (selectedTab == 2) {
+      flights.sort((a, b) => a["duration"].compareTo(b["duration"]));
+    }
+  }
+
+  String _formatHeaderDate(DateTime? date, {String placeholder = "Date a definir"}) {
+    return date == null
+        ? placeholder
+        : "${date.day}/${date.month}/${date.year}";
   }
 
   @override
   Widget build(BuildContext context) {
+    final departTxt = _formatHeaderDate(widget.departDate);
+    final retourTxt = widget.tripType == 0
+        ? _formatHeaderDate(widget.retourDate, placeholder: "Date retour ?")
+        : "Aller simple";
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9F3F7),
       appBar: AppBar(
@@ -118,7 +230,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _tab("Meilleurs résultats", 0),
+              _tab("Meilleurs resultats", 0),
               _tab("Le moins cher", 1),
               _tab("Le plus rapide", 2),
             ],
@@ -139,7 +251,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${widget.from}  →  ${widget.to}",
+                    "${widget.from}  ->  ${widget.to}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -147,8 +259,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "${widget.departDate!.day}/${widget.departDate!.month}/${widget.departDate!.year} - "
-                    "${widget.retourDate!.day}/${widget.retourDate!.month}/${widget.retourDate!.year}  |  ${widget.adults} Adultes",
+                    widget.tripType == 0
+                        ? "$departTxt - $retourTxt  |  ${widget.adults} Adultes"
+                        : "$departTxt  |  ${widget.adults} Adultes",
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
@@ -198,8 +311,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     return Expanded(
       child: InkWell(
         onTap: () {
-          selectedTab = index;
-          applySorting();
+          setState(() {
+            selectedTab = index;
+            _applySorting();
+          });
         },
         child: Container(
           height: 45,
@@ -257,11 +372,16 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "${vol["depart"]}  →  ${vol["arrive"]}",
+                    "${vol["depart"]}  ->  ${vol["arrive"]}",
                     style: const TextStyle(fontSize: 14),
                   ),
+                  if (widget.tripType == 0 && vol["returnDepart"] != null)
+                    Text(
+                      "${vol["returnDepart"]}  ->  ${vol["returnArrive"]}",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    ),
                   Text(
-                    "${vol["returnDepart"]}  →  ${vol["returnArrive"]}",
+                    vol["stopsLabel"],
                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),
                 ],

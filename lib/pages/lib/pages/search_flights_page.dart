@@ -229,7 +229,12 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           ),
                         );
                         if (value != null) {
-                          setState(() => tripType = value);
+                          setState(() {
+                            tripType = value;
+                            if (tripType == 1) {
+                              retourDate = null;
+                            }
+                          });
                         }
                       },
                     ),
@@ -339,6 +344,19 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 width: 180,
                 child: ElevatedButton(
                   onPressed: () {
+                    if (departDate == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Choisissez une date de départ")),
+                      );
+                      return;
+                    }
+                    if (tripType == 0 && retourDate == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Choisissez une date de retour")),
+                      );
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -346,8 +364,10 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                           from: fromController.text,
                           to: toController.text,
                           departDate: departDate,
-                          retourDate: retourDate,
+                          retourDate: tripType == 0 ? retourDate : null,
                           adults: adults,
+                          tripType: tripType,
+                          stopCount: stopCount,
                         ),
                       ),
                     );
@@ -374,11 +394,11 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
       ),
 
       // -------------------------------
-      // 🔥 BOTTOM NAVIGATION UNIFORME 🔥
+      //  BOTTOM NAVIGATION UNIFORME 
       // -------------------------------
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: 1, // Ici : page Recherche
+        currentIndex: 1, 
         selectedItemColor: const Color(0xFF265F6A),
         unselectedItemColor: Colors.grey,
         selectedFontSize: 0,
@@ -395,7 +415,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               break;
 
             case 1:
-              break; // page actuelle
+              break;
 
             case 2:
               Navigator.pushReplacement(

@@ -341,7 +341,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 🔥 DESTINATION CARD → MAINTENANT CLIQUABLE VERS PAGE DE DÉTAILS
+  // DESTINATION CARD
   Widget _destinationCard(
     String city,
     String country,
@@ -406,7 +406,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 // ------------------------------------------------------------
-// 🔥 PAGE DE DÉTAILS (DANS LE MÊME FICHIER)
+//  PAGE DE DÉTAILS
 // ------------------------------------------------------------
 class DestinationDetailsPage extends StatelessWidget {
   final String city;
@@ -519,7 +519,7 @@ class DestinationDetailsPage extends StatelessWidget {
 }
 
 // ------------------------------------------------------------
-// 🔥 DESCRIPTION AUTOMATIQUE
+//  DESCRIPTION AUTOMATIQUE
 // ------------------------------------------------------------
 String _getDescription(String city) {
   switch (city) {
