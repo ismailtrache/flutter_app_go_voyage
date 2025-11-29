@@ -67,7 +67,12 @@ class _HistoriquePageState extends State<HistoriquePage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+            );
+          },
         ),
         centerTitle: true,
         title: const Text(
@@ -336,7 +341,6 @@ class _TripCard extends StatelessWidget {
         break;
     }
 
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
       decoration: BoxDecoration(
@@ -381,6 +385,3 @@ class _TripCard extends StatelessWidget {
     );
   }
 }
-
-
-
