@@ -11,7 +11,7 @@ Future<Uint8List> generateTicketPDF(Map<String, dynamic> vol) async {
   final PdfColor lightGrey = PdfColor.fromInt(0xFFEFEFEF);
 
   // بيانات إضافية (افتراضية) ليشبه التذكرة الحقيقية
-  const String passengerName = "HACHEM / S";
+  const String passengerName = "HACHEM / S ISMAIL / T CHAKIB / R";
   const String airlineName = "GO TRAVEL AIRLINES";
   const String boardingGroup = "F";
   const String seat = "12C";
