@@ -2,23 +2,14 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'search_flights_page.dart';
 import 'historique.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
-  void _showSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Fonctionnalité à venir"),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final Color primary = const Color(0xFF265F6A);
-    final Color sectionBg = const Color(0xFFF5F5F5);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,21 +30,18 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
 
-      // ✅ Nouveau body : profil cohérent
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            // --------- Avatar + infos utilisateur ----------
-            const SizedBox(height: 10),
+
+            // ===================== PHOTO + NOM =====================
             Center(
               child: Column(
                 children: [
                   const CircleAvatar(
                     radius: 48,
                     backgroundColor: Color(0xFFE0E0E0),
-                    // Tu pourras mettre une vraie image ici :
-                    // backgroundImage: AssetImage('assets/images/profile.jpg'),
                     child: Icon(
                       Icons.person,
                       size: 48,
@@ -64,9 +52,8 @@ class ProfilePage extends StatelessWidget {
                   const Text(
                     "John Doe",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -81,127 +68,79 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 30),
 
-            // --------- Section : Compte ----------
-            _ProfileSection(
-              title: "Compte",
-              backgroundColor: sectionBg,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.edit, color: primary),
-                  title: const Text("Modifier le profil"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-                ListTile(
-                  leading: Icon(Icons.badge_outlined, color: primary),
-                  title: const Text("Informations personnelles"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // --------- Section : Voyages ----------
-            _ProfileSection(
-              title: "Voyages",
-              backgroundColor: sectionBg,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.flight_takeoff, color: primary),
-                  title: const Text("Mes réservations"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-                ListTile(
-                  leading: Icon(Icons.favorite_border, color: primary),
-                  title: const Text("Favoris"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // --------- Section : Préférences ----------
-            _ProfileSection(
-              title: "Préférences",
-              backgroundColor: sectionBg,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.language, color: primary),
-                  title: const Text("Langue"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text("Français"),
-                      SizedBox(width: 4),
-                      Icon(Icons.chevron_right),
-                    ],
+            // ===================== SECTION COMPTE =====================
+            _sectionTitle("Compte"),
+            _profileTile(
+              icon: Icons.edit,
+              title: "Modifier le profil",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const EditProfilePage(),
                   ),
-                  onTap: () => _showSoon(context),
-                ),
-                ListTile(
-                  leading: Icon(Icons.notifications_none, color: primary),
-                  title: const Text("Notifications"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-              ],
+                );
+              },
+              primary: primary,
             ),
-
-            const SizedBox(height: 16),
-
-            // --------- Section : Aide & support ----------
-            _ProfileSection(
-              title: "Aide",
-              backgroundColor: sectionBg,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.help_outline, color: primary),
-                  title: const Text("Centre d’aide"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-                ListTile(
-                  leading: Icon(Icons.description_outlined, color: primary),
-                  title: const Text("Conditions & confidentialité"),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showSoon(context),
-                ),
-              ],
+            _profileTile(
+              icon: Icons.lock_outline,
+              title: "Changer le mot de passe",
+              onTap: () => _soon(context),
+              primary: primary,
             ),
 
             const SizedBox(height: 24),
 
-            // --------- Déconnexion ----------
-            TextButton.icon(
-              onPressed: () {
-                _showSoon(context);
-              },
-              icon: const Icon(Icons.logout, color: Colors.redAccent),
-              label: const Text(
-                "Se déconnecter",
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            // ===================== SECTION PRÉFÉRENCES =====================
+            _sectionTitle("Préférences"),
+            _profileTile(
+              icon: Icons.favorite_border,
+              title: "Favoris",
+              onTap: () => _soon(context),
+              primary: primary,
+            ),
+            _profileTile(
+              icon: Icons.language,
+              title: "Langue",
+              onTap: () => _soon(context),
+              primary: primary,
+            ),
+            _profileTile(
+              icon: Icons.settings_outlined,
+              title: "Paramètres",
+              onTap: () => _soon(context),
+              primary: primary,
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 24),
+
+            // ===================== SECTION AUTRES =====================
+            _sectionTitle("Autres"),
+            _profileTile(
+              icon: Icons.help_outline,
+              title: "Aide & support",
+              onTap: () => _soon(context),
+              primary: primary,
+            ),
+            _profileTile(
+              icon: Icons.logout,
+              title: "Se déconnecter",
+              textColor: Colors.red,
+              onTap: () => _soon(context),
+              primary: primary,
+            ),
           ],
         ),
       ),
 
+      // ===================== NAVIGATION BAS =====================
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: 3, // 🔹 Ici on est sur Profil
-        selectedItemColor: const Color(0xFF265F6A),
+        currentIndex: 3,
+        selectedItemColor: primary,
         unselectedItemColor: Colors.grey,
         selectedFontSize: 0,
         unselectedFontSize: 0,
@@ -212,9 +151,7 @@ class ProfilePage extends StatelessWidget {
             case 0:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const HomePage(),
-                ),
+                MaterialPageRoute(builder: (_) => const HomePage()),
               );
               break;
 
@@ -231,14 +168,11 @@ class ProfilePage extends StatelessWidget {
             case 2:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const HistoriquePage(),
-                ),
+                MaterialPageRoute(builder: (_) => const HistoriquePage()),
               );
               break;
 
             case 3:
-              // On est déjà sur la page Profil
               break;
           }
         },
@@ -276,44 +210,56 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-}
 
-// Petit widget pour structurer chaque bloc de la page profil
-class _ProfileSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  final Color backgroundColor;
+  // ===================== WIDGETS =====================
 
-  const _ProfileSection({
-    required this.title,
-    required this.children,
-    required this.backgroundColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
+  Widget _sectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text(
           title,
           style: const TextStyle(
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Colors.black54,
           ),
         ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+
+  Widget _profileTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    required Color primary,
+    Color? textColor,
+  }) {
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(icon, color: textColor ?? primary),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              color: textColor ?? Colors.black,
+            ),
           ),
-          child: Column(
-            children: children,
-          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onTap,
         ),
+        const Divider(height: 1),
       ],
+    );
+  }
+
+  void _soon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Fonctionnalité à venir")),
     );
   }
 }
