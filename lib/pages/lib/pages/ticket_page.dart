@@ -118,7 +118,7 @@ class TicketPage extends StatelessWidget {
                   },
                   child: const Text(
                     "Retour à l'accueil",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 94, 34, 34)),
                   ),
                 ),
 
