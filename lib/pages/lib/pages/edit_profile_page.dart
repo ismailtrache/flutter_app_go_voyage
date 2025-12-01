@@ -24,8 +24,6 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final Color primary = const Color(0xFF265F6A);
-
   final TextEditingController _nameController =
       TextEditingController();
   final TextEditingController _emailController =
@@ -150,22 +148,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBg,
 
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
+        title: Text(
           "Modifier le profil",
           style: TextStyle(
-            color: Color(0xFF265F6A),
+            color: colorScheme.primary,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Color(0xFF265F6A),
+        iconTheme: IconThemeData(
+          color: colorScheme.primary,
         ),
       ),
 
@@ -259,7 +257,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 "Promotions, rappels de vols, mises à jour importantes",
                 style: TextStyle(fontSize: 13, color: Colors.black54),
               ),
-              activeColor: primary,
+              activeColor: colorScheme.primary,
               value: _notificationsEnabled,
               onChanged: (v) {
                 setState(() {
@@ -275,7 +273,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primary,
+                  backgroundColor: colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -325,14 +323,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: const Color(0xFF265F6A)),
+        prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Color(0xFF265F6A),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
             width: 1.4,
           ),
         ),

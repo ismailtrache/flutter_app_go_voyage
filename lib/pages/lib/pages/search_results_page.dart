@@ -217,7 +217,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           "Resultats de recherche",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),

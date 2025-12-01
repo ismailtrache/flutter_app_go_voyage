@@ -17,8 +17,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBg,
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -32,12 +35,12 @@ class _HomePageState extends State<HomePage> {
                     height: 150,
                     child: Image.asset("assets/images/logo.png"),
                   ),
-                  const Text(
+                  Text(
                     "GO TRAVEL",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF265F6A),
+                      color: colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 25),
@@ -180,6 +183,12 @@ class _HomePageState extends State<HomePage> {
                     "assets/images/oran.png",
                   ),
                   _destinationCard(
+                    "Alger",
+                    "Algérie",
+                    620,
+                    "assets/images/Algiers.png",
+                  ),
+                  _destinationCard(
                     "Paris",
                     "France",
                     950,
@@ -239,8 +248,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
-        selectedItemColor: const Color(0xFF265F6A),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         selectedFontSize: 0,
         unselectedFontSize: 0,
         iconSize: 28,
@@ -527,6 +536,8 @@ String _getDescription(String city) {
       return "Le Caire est une ville historique fascinante, célèbre pour les pyramides de Gizeh, le Nil et ses marchés traditionnels.";
     case "Oran":
       return "Oran, la ville du raï, combine plages méditerranéennes, gastronomie et une ambiance vivante et chaleureuse.";
+    case "Alger":
+      return "Alger, la blanche, offre sa baie mythique, une Casbah classée et un mélange unique d’architecture ottomane et coloniale.";
     case "Paris":
       return "Paris, la ville lumière, est connue pour la Tour Eiffel, les musées, la mode et sa gastronomie raffinée.";
     case "Santorini":

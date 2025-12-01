@@ -15,7 +15,7 @@ class CheapestFlightDetails extends StatelessWidget {
 
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           "Details du vol",

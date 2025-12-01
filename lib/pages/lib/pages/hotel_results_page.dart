@@ -90,7 +90,7 @@ class HotelResultsPage extends StatelessWidget {
           "Offres hotels",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -235,7 +235,7 @@ class HotelResultsPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   foregroundColor: const Color(0xFF265F6A),
                   side: const BorderSide(color: Color(0xFF265F6A)),
                   shape: RoundedRectangleBorder(

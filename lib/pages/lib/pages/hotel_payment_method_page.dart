@@ -17,7 +17,7 @@ class HotelPaymentMethodPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF9F3F7),
       appBar: AppBar(
         title: const Text("Méthode de paiement", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),

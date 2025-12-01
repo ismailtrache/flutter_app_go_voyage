@@ -17,7 +17,7 @@ class HotelTicketPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF6F1F4),
       appBar: AppBar(
         title: const Text("Votre réservation d'hôtel", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),

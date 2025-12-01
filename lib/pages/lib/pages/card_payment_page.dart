@@ -22,7 +22,7 @@ class _CardPaymentPageState extends State<CardPaymentPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Paiement par Carte", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),

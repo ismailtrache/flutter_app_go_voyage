@@ -5,6 +5,7 @@ import 'home_page.dart';
 import 'search_flights_page.dart';
 import 'historique.dart';
 import 'edit_profile_page.dart';
+import 'settings_page.dart';
 import 'change_password_page.dart'; // ✅ IMPORT pour la page mot de passe
 
 class ProfilePage extends StatefulWidget {
@@ -15,8 +16,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final Color primary = const Color(0xFF265F6A);
-
   String _userName = "John Doe";
   String _userEmail = "john.doe@email.com";
   String _userPhone = "+1 514 000 0000";
@@ -32,23 +31,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final primary = colorScheme.primary;
+    final textColor = colorScheme.onSurface;
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBg,
 
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: scaffoldBg,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Mon profil",
           style: TextStyle(
-            color: Color(0xFF265F6A),
+            color: primary,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Color(0xFF265F6A),
+        iconTheme: IconThemeData(
+          color: primary,
         ),
       ),
 
@@ -62,22 +65,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   CircleAvatar(
                     radius: 48,
-                    backgroundColor: const Color(0xFFE0E0E0),
+                    backgroundColor: colorScheme.surfaceVariant,
                     backgroundImage: _avatarImage(),
                     child: _userImagePath == null
-                        ? const Icon(
+                        ? Icon(
                             Icons.person,
                             size: 48,
-                            color: Color(0xFF9E9E9E),
+                            color: colorScheme.onSurfaceVariant,
                           )
                         : null,
                   ),
                   const SizedBox(height: 12),
                   Text(
                     _userName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -85,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     _userEmail,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -160,7 +164,12 @@ class _ProfilePageState extends State<ProfilePage> {
             _profileTile(
               icon: Icons.settings_outlined,
               title: "Paramètres",
-              onTap: () => _soon(context),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsPage()),
+                );
+              },
               primary: primary,
             ),
 
@@ -187,10 +196,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // ===================== NAVIGATION BAS =====================
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         type: BottomNavigationBarType.fixed,
         currentIndex: 3,
         selectedItemColor: primary,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         selectedFontSize: 0,
         unselectedFontSize: 0,
         iconSize: 28,
@@ -265,10 +276,10 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.black54,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -282,6 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required Color primary,
     Color? textColor,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         ListTile(
@@ -291,7 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
             title,
             style: TextStyle(
               fontSize: 16,
-              color: textColor ?? Colors.black,
+              color: textColor ?? colorScheme.onSurface,
             ),
           ),
           trailing: const Icon(Icons.chevron_right),
