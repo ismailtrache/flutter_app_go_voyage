@@ -1,25 +1,57 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  const EditProfilePage({
+    super.key,
+    required this.initialName,
+    required this.initialEmail,
+    required this.initialPhone,
+    required this.initialCountry,
+    this.initialImagePath,
+  });
+
+  final String initialName;
+  final String initialEmail;
+  final String initialPhone;
+  final String initialCountry;
+  final String? initialImagePath;
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _formKey = GlobalKey<FormState>();
+  final Color primary = const Color(0xFF265F6A);
 
-  // 🔹 Données fictives pour l’instant
   final TextEditingController _nameController =
-      TextEditingController(text: "John Doe");
+      TextEditingController();
   final TextEditingController _emailController =
-      TextEditingController(text: "john.doe@email.com");
+      TextEditingController();
   final TextEditingController _phoneController =
-      TextEditingController(text: "+1 514 000 0000");
+      TextEditingController();
   final TextEditingController _countryController =
-      TextEditingController(text: "Canada");
-  DateTime? _birthDate;
+      TextEditingController();
+
+  bool _notificationsEnabled = true;
+
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.initialName;
+    _emailController.text = widget.initialEmail;
+    _phoneController.text = widget.initialPhone;
+    _countryController.text = widget.initialCountry;
+    if (widget.initialImagePath != null &&
+        widget.initialImagePath!.isNotEmpty) {
+      _imageFile = File(widget.initialImagePath!);
+    }
+  }
 
   @override
   void dispose() {
@@ -30,204 +62,278 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
-  Future<void> _pickBirthDate() async {
-    final now = DateTime.now();
-    final initial = _birthDate ?? DateTime(now.year - 25, now.month, now.day);
-
-    final DateTime? picked = await showDatePicker(
+  Future<void> _changePhoto() async {
+    showModalBottomSheet(
       context: context,
-      initialDate: initial,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(now.year - 10),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Choisir depuis la galerie"),
+                onTap: () async {
+                  final XFile? picked =
+                      await _picker.pickImage(source: ImageSource.gallery, imageQuality: 75);
+                  if (picked != null) {
+                    setState(() {
+                      _imageFile = File(picked.path);
+                    });
+                  }
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Prendre une photo"),
+                onTap: () async {
+                  final XFile? picked =
+                      await _picker.pickImage(source: ImageSource.camera, imageQuality: 75);
+                  if (picked != null) {
+                    setState(() {
+                      _imageFile = File(picked.path);
+                    });
+                  }
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: const Text("Supprimer la photo"),
+                onTap: () {
+                  setState(() {
+                    _imageFile = null;
+                  });
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 6),
+            ],
+          ),
+        );
+      },
     );
-
-    if (picked != null) {
-      setState(() {
-        _birthDate = picked;
-      });
-    }
   }
 
-  String _formatBirthDate() {
-    if (_birthDate == null) return "Sélectionner une date";
-    return "${_birthDate!.day.toString().padLeft(2, '0')}/"
-        "${_birthDate!.month.toString().padLeft(2, '0')}/"
-        "${_birthDate!.year}";
+  void _saveProfile() {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final country = _countryController.text.trim();
+
+    debugPrint("=== PROFIL SAUVEGARDE (SIMULATION) ===");
+    debugPrint('Nom : $name');
+    debugPrint('Email : $email');
+    debugPrint('Telephone : $phone');
+    debugPrint('Pays : $country');
+    debugPrint('Notifications : $_notificationsEnabled');
+    debugPrint('Photo choisie : ${_imageFile?.path}');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Profil mis a jour (simulation locale)"),
+      ),
+    );
+
+    Navigator.pop(context, {
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'country': country,
+      'notifications': _notificationsEnabled,
+      'imagePath': _imageFile?.path,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color primary = const Color(0xFF265F6A);
-
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
-        title: const Text(
-          "Modifier le profil",
-          style: TextStyle(color: Colors.black),
-        ),
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          "Modifier le profil",
+          style: TextStyle(
+            color: Color(0xFF265F6A),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Color(0xFF265F6A),
+        ),
       ),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Avatar + petit texte
-              const SizedBox(height: 10),
-              Center(
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 42,
-                      backgroundColor: Color(0xFFE0E0E0),
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Color(0xFF9E9E9E),
-                      ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            // ===================== AVATAR MODIFIABLE =====================
+            Center(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: _changePhoto,
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundColor: const Color(0xFFE0E0E0),
+                      backgroundImage:
+                          _imageFile != null ? FileImage(_imageFile!) : null,
+                      child: _imageFile == null
+                          ? const Icon(
+                              Icons.camera_alt,
+                              size: 32,
+                              color: Color(0xFF9E9E9E),
+                            )
+                          : null,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Changer la photo (à venir)",
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: _changePhoto,
+                    child: const Text(
+                      "Changer la photo",
                       style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                        color: Color(0xFF265F6A),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Nom complet
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Nom complet",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Veuillez entrer votre nom";
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // Email
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: "Adresse e-mail",
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Veuillez entrer votre e-mail";
-                  }
-                  if (!value.contains("@")) {
-                    return "E-mail invalide";
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // Téléphone
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: "Téléphone",
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-
-              const SizedBox(height: 16),
-
-              // Pays
-              TextFormField(
-                controller: _countryController,
-                decoration: const InputDecoration(
-                  labelText: "Pays de résidence",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Date de naissance
-              InkWell(
-                onTap: _pickBirthDate,
-                borderRadius: BorderRadius.circular(8),
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: "Date de naissance",
-                    border: OutlineInputBorder(),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _formatBirthDate(),
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: _birthDate == null
-                              ? Colors.grey[600]
-                              : Colors.black,
-                        ),
-                      ),
-                      const Icon(Icons.calendar_today, size: 18),
-                    ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ===================== CHAMPS DU PROFIL =====================
+            _buildSectionTitle("Informations personnelles"),
+            const SizedBox(height: 10),
+
+            _buildTextField(
+              label: "Nom complet",
+              controller: _nameController,
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 14),
+
+            _buildTextField(
+              label: "Adresse e-mail",
+              controller: _emailController,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 14),
+
+            _buildTextField(
+              label: "Téléphone",
+              controller: _phoneController,
+              icon: Icons.phone_outlined,
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 14),
+
+            _buildTextField(
+              label: "Pays / Région",
+              controller: _countryController,
+              icon: Icons.public,
+            ),
+
+            const SizedBox(height: 24),
+
+            // ===================== PRÉFÉRENCES =====================
+            _buildSectionTitle("Préférences"),
+            const SizedBox(height: 6),
+
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                "Recevoir les notifications",
+                style: TextStyle(fontSize: 16),
+              ),
+              subtitle: const Text(
+                "Promotions, rappels de vols, mises à jour importantes",
+                style: TextStyle(fontSize: 13, color: Colors.black54),
+              ),
+              activeColor: primary,
+              value: _notificationsEnabled,
+              onChanged: (v) {
+                setState(() {
+                  _notificationsEnabled = v;
+                });
+              },
+            ),
+
+            const SizedBox(height: 30),
+
+            // ===================== BOUTON ENREGISTRER =====================
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: _saveProfile,
+                child: const Text(
+                  "Enregistrer",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-              const SizedBox(height: 28),
+  // ===================== WIDGETS UTILITAIRES =====================
 
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // Ici tu pourras sauvegarder dans un backend / local storage plus tard
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Profil mis à jour (démonstration)"),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text(
-                    "Enregistrer",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+  Widget _buildSectionTitle(String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
 
-              const SizedBox(height: 10),
-            ],
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: const Color(0xFF265F6A)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color(0xFF265F6A),
+            width: 1.4,
           ),
         ),
       ),

@@ -1,15 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'search_flights_page.dart';
 import 'historique.dart';
 import 'edit_profile_page.dart';
+import 'change_password_page.dart'; // ✅ IMPORT pour la page mot de passe
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final Color primary = const Color(0xFF265F6A);
+
+  String _userName = "John Doe";
+  String _userEmail = "john.doe@email.com";
+  String _userPhone = "+1 514 000 0000";
+  String _userCountry = "Canada";
+  String? _userImagePath;
+
+  ImageProvider<Object>? _avatarImage() {
+    if (_userImagePath == null) return null;
+    final file = File(_userImagePath!);
+    if (!file.existsSync()) return null;
+    return FileImage(file);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Color primary = const Color(0xFF265F6A);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -34,34 +56,36 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-
             // ===================== PHOTO + NOM =====================
             Center(
               child: Column(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 48,
-                    backgroundColor: Color(0xFFE0E0E0),
-                    child: Icon(
-                      Icons.person,
-                      size: 48,
-                      color: Color(0xFF9E9E9E),
-                    ),
+                    backgroundColor: const Color(0xFFE0E0E0),
+                    backgroundImage: _avatarImage(),
+                    child: _userImagePath == null
+                        ? const Icon(
+                            Icons.person,
+                            size: 48,
+                            color: Color(0xFF9E9E9E),
+                          )
+                        : null,
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    "John Doe",
-                    style: TextStyle(
+                  Text(
+                    _userName,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "john.doe@email.com",
+                    _userEmail,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Colors.grey,
                     ),
                   ),
                 ],
@@ -75,20 +99,45 @@ class ProfilePage extends StatelessWidget {
             _profileTile(
               icon: Icons.edit,
               title: "Modifier le profil",
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final result = await Navigator.push<Map<String, dynamic>>(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const EditProfilePage(),
+                    builder: (_) => EditProfilePage(
+                      initialName: _userName,
+                      initialEmail: _userEmail,
+                      initialPhone: _userPhone,
+                      initialCountry: _userCountry,
+                      initialImagePath: _userImagePath,
+                    ),
                   ),
                 );
+                if (result != null) {
+                  setState(() {
+                    _userName = result['name'] ?? _userName;
+                    _userEmail = result['email'] ?? _userEmail;
+                    _userPhone = result['phone'] ?? _userPhone;
+                    _userCountry = result['country'] ?? _userCountry;
+                    if (result.containsKey('imagePath')) {
+                      _userImagePath = result['imagePath'] as String?;
+                    }
+                  });
+                }
               },
               primary: primary,
             ),
             _profileTile(
               icon: Icons.lock_outline,
               title: "Changer le mot de passe",
-              onTap: () => _soon(context),
+              // ✅ Maintenant ça ouvre la vraie page de changement de mot de passe
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>   ChangePasswordPage(),
+                  ),
+                );
+              },
               primary: primary,
             ),
 
@@ -145,7 +194,6 @@ class ProfilePage extends StatelessWidget {
         selectedFontSize: 0,
         unselectedFontSize: 0,
         iconSize: 28,
-
         onTap: (index) {
           switch (index) {
             case 0:
@@ -154,7 +202,6 @@ class ProfilePage extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const HomePage()),
               );
               break;
-
             case 1:
               Navigator.pushReplacement(
                 context,
@@ -164,19 +211,17 @@ class ProfilePage extends StatelessWidget {
                 ),
               );
               break;
-
             case 2:
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const HistoriquePage()),
               );
               break;
-
             case 3:
+              // déjà sur Profil
               break;
           }
         },
-
         items: const [
           BottomNavigationBarItem(
             icon: Padding(
